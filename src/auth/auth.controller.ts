@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, HttpCode, Post } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthDto } from "./dto";
 
@@ -6,6 +6,7 @@ import { AuthDto } from "./dto";
 export class AuthController {
     constructor(private authService: AuthService) {}
 
+    @HttpCode(200)
     @Post("login")
     login(@Body() dto: AuthDto) {
         // Call the login method from AuthService
