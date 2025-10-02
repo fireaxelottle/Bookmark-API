@@ -5,6 +5,7 @@ import { PrismaService } from '../src/prisma/prisma.service';
 
 import * as pactum from 'pactum';
 import { AuthDto } from '../src/auth/dto';
+import { EditUserDto } from '../src/user/dto';
 describe('App e2e', () => {
   let app: INestApplication;
   beforeAll(async () => {
@@ -62,14 +63,14 @@ describe('App e2e', () => {
           .withBody({ email: dto.password })
           .expectStatus(400);
       });
-    });
-    //
-    it('should signup', () => {
-      return pactum
-        .spec()
-        .post(baseUrl + 'auth/signup')
-        .withBody(dto)
-        .expectStatus(201);
+      //
+      it('should signup', () => {
+        return pactum
+          .spec()
+          .post(baseUrl + 'auth/signup')
+          .withBody(dto)
+          .expectStatus(201);
+      });
     });
 
     describe('Login', () => {
@@ -95,7 +96,7 @@ describe('App e2e', () => {
           .post(baseUrl + 'auth/login')
           .withBody({ email: dto.email })
           .expectStatus(400);
-      }); 
+      });
       //
       it('should login', () => {
         return pactum
@@ -103,7 +104,6 @@ describe('App e2e', () => {
           .post(baseUrl + 'auth/login')
           .withBody(dto)
           .expectStatus(200)
-          .inspect()
           .stores('userAt', 'access_token');
       });
       //
@@ -112,6 +112,7 @@ describe('App e2e', () => {
   });
 
   describe('User', () => {
+    ////
     describe('Get Me', () => {
       //
       it('should get user', () => {
@@ -132,7 +133,36 @@ describe('App e2e', () => {
       });
       //
     });
-    describe('Edit Me', () => {});
+    ////
+    describe('Edit Me', () => {
+      //
+      it('should edit user', () => {
+        const dto: EditUserDto = {
+          email: 'user@gmail.com',
+          firstName: 'Ali',
+        };
+        return pactum
+          .spec()
+          .patch(baseUrl + 'users/me')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .withBody(dto)
+          .expectStatus(200);
+      });
+      //
+      it('should not edit user <No Autherization>', () => {
+        const dto: EditUserDto = {
+          email: 'user@gmail.com',
+          firstName: 'Ali',
+        };
+        return pactum
+          .spec()
+          .patch(baseUrl + 'users/me')
+          .withBody(dto)
+          .expectStatus(401);
+      });
+    });
   });
 
   describe('Bookmarks', () => {
