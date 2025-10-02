@@ -8,6 +8,7 @@ export const GetUser = createParamDecorator(
         
         const user = request.user; 
 
+
         if (data) {
             return user ? user[data] : undefined; 
         }
